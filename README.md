@@ -89,6 +89,7 @@ Prerequisites
 
 
 1. Set Up API Keys
+   
 Update the `config_secrets.py` file in the project root:
 
 NewsAPI Configuration
@@ -103,16 +104,19 @@ AZURE_STORAGE_CONNECTION_STRING = "your_azure_storage_connection_string_here"
 
 
 2. Train the ML Model
+   
 bash
 python ml/train_model.py
 
 
-3. Run the Dashboard
+4. Run the Dashboard
+   
 bash
 streamlit run app.py
 
 
-4. Open Your Browser
+6. Open Your Browser
+   
 Navigate to `http://localhost:****` to see the dashboard!
 
 API Setup Guide
