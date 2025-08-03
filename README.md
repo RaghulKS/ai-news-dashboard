@@ -135,28 +135,6 @@ Azure Cognitive Services Setup
 5. Add them to your `config_secrets.py` file
 
 
-
- Project Structure
-
-ai-news-dashboard/
-├── app.py                    # Main Streamlit application
-├── config.py                 # Configuration settings
-├── requirements.txt          # Python dependencies
-├── SETUP.md                 # Detailed setup guide
-├── README.md                # This file
-├── test_*.py                # Test scripts
-├── utils/
-│   └── fetch_news.py        # News fetching module
-├── azure/
-│   ├── azure_sentiment.py   # Azure sentiment analysis
-│   └── azure_ner.py         # Azure NER
-├── ml/
-│   ├── train_model.py       # ML model training
-│   ├── model.py            # ML model interface
-│   └── models/             # Saved model files
-└── data/                   # Data storage directory
-
-
  Configuration
 
 Environment Variables
@@ -170,4 +148,5 @@ Customization
 - Modify `ml/train_model.py` to adjust ML model parameters
 - Update `utils/fetch_news.py` to change news filtering logic
 - Customize charts in `app.py` for different visualizations
+
 
