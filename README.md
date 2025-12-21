@@ -3,11 +3,11 @@ A real-time Streamlit dashboard that analyzes financial news sentiment and predi
 
 This dashboard transforms financial news into actionable market insights by:
 
-- Fetching real-time financial news** from NewsAPI based on your queries
-- Analyzing sentiment** using Azure Cognitive Services (positive/neutral/negative)
-- Extracting companies and organizations** mentioned in the news
-- Predicting stock movements** using a custom ML model (Up/Down/Flat)
-- Presenting everything** in a beautiful, interactive Streamlit interface
+- Fetching real-time financial news from NewsAPI based on your queries
+- Analyzing sentiment using Azure Cognitive Services (positive/neutral/negative)
+- Extracting companies and organizations mentioned in the news
+- Predicting stock movements using a custom ML model (Up/Down/Flat)
+- Presenting everything in a beautiful, interactive Streamlit interface
 
 Key Features
 
