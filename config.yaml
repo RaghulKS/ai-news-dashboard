@@ -1,0 +1,19 @@
+# Financial Event Intelligence Engine configuration
+
+rss_feeds:
+  - https://feeds.reuters.com/reuters/businessNews
+  - https://feeds.marketwatch.com/marketwatch/topstories/
+
+nlp:
+  sentiment_backend: lexicon  # lexicon | finbert | azure
+  embedding_model: sentence-transformers/all-MiniLM-L6-v2
+  cluster_similarity_threshold: 0.75
+
+ingestion:
+  max_articles_per_query: 30
+  days_back: 7
+
+market:
+  default_horizons: [1, 5, 21]
+  walk_forward_train_days: 252
+  walk_forward_test_days: 63

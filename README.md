@@ -1,152 +1,140 @@
-A real-time Streamlit dashboard that analyzes financial news sentiment and predicts potential market movements using Azure AI services and custom ML models. Get instant insights into how news affects stock prices with beautiful visualizations and AI-powered predictions.
+# Financial Event Intelligence NLP Engine
 
+Transform noisy financial news into structured event intelligence — not another sentiment dashboard.
 
-This dashboard transforms financial news into actionable market insights by:
+**Problem:** Financial professionals are overwhelmed by duplicate, noisy, and contradictory news. This system identifies meaningful financial events, links them to entities/assets, measures novelty, estimates market relevance, and clusters 30 articles about one story into a single event object.
 
-- Fetching real-time financial news from NewsAPI based on your queries
-- Analyzing sentiment using Azure Cognitive Services (positive/neutral/negative)
-- Extracting companies and organizations mentioned in the news
-- Predicting stock movements using a custom ML model (Up/Down/Flat)
-- Presenting everything in a beautiful, interactive Streamlit interface
+## Architecture
 
-Key Features
+```
+Multi-source Ingestion (NewsAPI + RSS)
+        ↓
+Historical Storage + Deduplication (SQLite)
+        ↓
+NLP Pipeline
+  ├── FinBERT / Lexicon Sentiment (Azure optional)
+  ├── Financial Entity Linking (tickers, sectors, executives, macro)
+  ├── Event Extraction (11 event classes)
+  └── Dense Embeddings (sentence-transformers)
+        ↓
+Semantic Story Clustering + Novelty Detection
+        ↓
+Consensus / Contradiction Signals
+        ↓
+Event Timeline + Grounded Summarization
+        ↓
+Leakage-Safe Market Impact Research (yfinance)
+        ↓
+Streamlit Event Cluster Dashboard
+```
 
-Smart News Analysis
-- Real-time news fetching from NewsAPI
-- Intelligent filtering for financial relevance
-- Support for any stock ticker or company name
-- Configurable number of articles (1-10)
+## Key Capabilities
 
-Advanced Sentiment Analysis
-- Azure Cognitive Services integration
-- Three-way sentiment classification (Positive/Neutral/Negative)
-- Confidence scores for each sentiment
-- Beautiful dual visualization (pie chart + bar chart)
+| Capability | Implementation |
+|---|---|
+| Multi-source ingestion | NewsAPI + Reuters/MarketWatch RSS |
+| Deduplication | URL + near-duplicate title matching |
+| Financial sentiment | FinBERT (ProsusAI/finbert) with lexicon fallback |
+| Entity linking | Ticker map + regex + sector/macro/regulator dictionaries |
+| Event extraction | 11 classes: earnings, guidance, M&A, regulatory, product, layoffs, litigation, macro, analyst, dividend, IPO |
+| Embeddings | sentence-transformers/all-MiniLM-L6-v2 with TF-IDF fallback |
+| Story clustering | Cosine-similarity agglomerative grouping |
+| Novelty detection | Distance from historical cluster centroids |
+| Contradiction signals | Cross-source sentiment disagreement |
+| Summarization | Extractive, grounded in retrieved articles only |
+| Market research | Event → forward returns with walk-forward validation |
+| Evaluation | Sentiment F1, NER F1, event F1, clustering silhouette, calibration ECE |
 
-Named Entity Recognition
-- Automatic extraction of companies and organizations
-- Financial entity filtering
-- Entity confidence scoring
-- Clean presentation in analysis cards
+**Azure is optional** — the system runs fully on open-source transformers without Azure credentials.
 
-ML-Powered Predictions
-- Custom Random Forest classifier
-- Stock movement prediction (Up/Down/Flat)
-- Confidence scores for predictions
-- Feature importance analysis
+## Quick Start
 
-Beautiful Visualizations**
-- Interactive charts with Plotly
-- Sentiment distribution charts
-- Stock movement prediction charts
-- Real-time metrics dashboard
-- Export results to CSV
+```bash
+pip install -r requirements.txt
+cp config_secrets.py.example config_secrets.py
+# Add NEWS_API_KEY (optional for RSS-only mode)
 
-Enhanced User Experience**
-- Modern gradient design
-- Responsive layout
-- Bigger fonts and better colors
-- Visual separators and cards
-- Comprehensive error handling
-
-Tech Stack
-
-Frontend & UI
-- Streamlit - Interactive web dashboard
-- Plotly - Interactive charts and visualizations
-- Custom CSS - Modern styling and gradients
-
-Backend & APIs
-- Python 3.8+ - Core programming language
-- NewsAPI - Financial news data
-- Azure Cognitive Services - Sentiment analysis & NER
-- Azure Storage - Data persistence (optional)
-
-Machine Learning
-- scikit-learn - ML algorithms and preprocessing
-- XGBoost - Gradient boosting for predictions
-- TF-IDF - Text feature extraction
-- joblib - Model serialization
-
-Data Processing
-- pandas - Data manipulation and analysis
-- numpy - Numerical computations
-- requests - HTTP API calls
-
-Development & Testing
-- pytest - Unit and integration testing
-- python-dotenv - Environment configuration
-- black - Code formatting
-- flake8 - Code linting
-
-
- Quick Start
-
-Prerequisites
-- Python 3.8 or higher
-- NewsAPI account (free tier available)
-- Azure Cognitive Services account
-
-
-1. Set Up API Keys
-   
-Update the `config_secrets.py` file in the project root:
-
-NewsAPI Configuration
-NEWS_API_KEY = "your_news_api_key_here"
-
-Azure Cognitive Services
-AZURE_TEXT_ANALYTICS_ENDPOINT = "https://your-resource.cognitiveservices.azure.com/"
-AZURE_TEXT_ANALYTICS_KEY = "your_azure_text_analytics_key_here"
-
-Optional: Azure Storage
-AZURE_STORAGE_CONNECTION_STRING = "your_azure_storage_connection_string_here"
-
-
-2. Train the ML Model
-   
-bash
-python ml/train_model.py
-
-
-4. Run the Dashboard
-   
-bash
+# Run dashboard
 streamlit run app.py
 
+# Or CLI
+python run_pipeline.py AAPL --count 20 --sentiment lexicon
+```
 
-6. Open Your Browser
-   
-Navigate to `http://localhost:****` to see the dashboard!
+### Docker
 
-API Setup Guide
+```bash
+docker compose up --build
+# Dashboard at http://localhost:8501
+```
 
-NewsAPI Setup
-1. Visit [NewsAPI.org](https://newsapi.org/)
-2. Sign up for a free account
-3. Copy your API key
-4. Add it to your `config_secrets.py` file
+## Configuration
 
-Azure Cognitive Services Setup
-1. Go to [Azure Portal](https://portal.azure.com/)
-2. Create a new Cognitive Services resource
-3. Enable Text Analytics service
-4. Copy the endpoint and key
-5. Add them to your `config_secrets.py` file
+Environment variables or `config.yaml`:
 
+| Variable | Default | Description |
+|---|---|---|
+| `NEWS_API_KEY` | — | NewsAPI key (optional if using RSS only) |
+| `SENTIMENT_BACKEND` | `lexicon` | `lexicon`, `finbert`, or `azure` |
+| `EMBEDDING_MODEL` | `all-MiniLM-L6-v2` | Sentence transformer model |
+| `CLUSTER_SIMILARITY_THRESHOLD` | `0.75` | Clustering cosine threshold |
+| `USE_AZURE_FALLBACK` | `false` | Enable Azure as fallback |
 
- Configuration
+## Project Structure
 
-Environment Variables
-- `NEWS_API_KEY`: Your NewsAPI key
-- `AZURE_TEXT_ANALYTICS_ENDPOINT`: Azure endpoint
-- `AZURE_TEXT_ANALYTICS_KEY`: Azure key
-- `LOG_LEVEL`: Logging level (INFO, DEBUG, etc.)
-- `MAX_ARTICLES_PER_QUERY`: Maximum articles to fetch (default: 5)
+```
+finintel/
+├── config.py              # Typed configuration
+├── models/                # Pydantic domain models
+├── ingestion/             # NewsAPI + RSS sources
+├── storage/               # SQLite + deduplication
+├── nlp/                   # Sentiment, NER, events, embeddings
+├── clustering/            # Semantic clustering + novelty
+├── signals/               # Consensus/contradiction
+├── market/                # Price data + leakage-safe research
+├── pipeline/              # End-to-end orchestrator
+└── evaluation/            # Metrics suite
 
-Customization
-- Modify `ml/train_model.py` to adjust ML model parameters
-- Update `utils/fetch_news.py` to change news filtering logic
-- Customize charts in `app.py` for different visualizations
+tests/                     # pytest suite (no live API required)
+data/
+├── entities/ticker_map.json
+└── evaluation/sample_labels.json
+```
 
+## Market Impact Research
 
+The research module computes forward returns at configurable horizons (1d, 5d, 21d) using prices available **only after** the event timestamp. Results include:
+
+- Mean/median return, hit rate, t-statistic
+- Explicit significance flag (requires n≥30 and |t|>1.96)
+- Walk-forward time-based validation (no random shuffle)
+
+**We do not fabricate prediction accuracy.** When sample sizes are insufficient or results are not significant, the system states this explicitly.
+
+## Evaluation
+
+```bash
+pytest tests/ -v --cov=finintel
+```
+
+Sample labeled data in `data/evaluation/sample_labels.json` for benchmarking sentiment, event classification, and entity linking.
+
+## Tech Stack
+
+- **Transformers:** FinBERT financial sentiment
+- **Embeddings:** sentence-transformers
+- **NLP:** Rule-based event extraction + entity linking
+- **Clustering:** Cosine similarity on dense embeddings
+- **Storage:** SQLite with typed Pydantic models
+- **Market data:** yfinance
+- **Frontend:** Streamlit + Plotly
+- **CI:** GitHub Actions (lint + pytest)
+- **Deploy:** Docker
+
+## Legacy Code
+
+The original Azure-centric modules remain in `azure/` and `ml/` for backward compatibility. The new `finintel/` package is the primary intelligence layer.
+
+## License
+
+MIT

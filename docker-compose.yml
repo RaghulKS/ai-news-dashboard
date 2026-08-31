@@ -1,0 +1,12 @@
+services:
+  finintel:
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+    environment:
+      - NEWS_API_KEY=${NEWS_API_KEY:-}
+      - SENTIMENT_BACKEND=lexicon
+      - LOG_LEVEL=INFO
+    restart: unless-stopped

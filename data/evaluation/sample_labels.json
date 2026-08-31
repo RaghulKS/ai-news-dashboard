@@ -1,0 +1,16 @@
+{
+  "sentiment": [
+    {"text": "Stock surges after earnings beat", "label": "positive"},
+    {"text": "Shares plunge on weak guidance", "label": "negative"},
+    {"text": "Company holds annual meeting", "label": "neutral"}
+  ],
+  "events": [
+    {"text": "Apple reports Q4 earnings beat", "label": "earnings"},
+    {"text": "Microsoft to acquire gaming studio", "label": "m_and_a"},
+    {"text": "Fed raises interest rates", "label": "macro"}
+  ],
+  "entities": [
+    {"text": "AAPL stock rises", "tickers": ["AAPL"]},
+    {"text": "Tesla delivery numbers", "tickers": ["TSLA"]}
+  ]
+}
